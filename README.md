@@ -11,4 +11,3 @@ By using vanilla javascript (without external librairies such as React, vue, ...
 - User can see when a task is created, and a task is done
 
 No backend required, custom css
-
