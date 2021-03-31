@@ -1,12 +1,12 @@
-// Select DOM
-const todoInput = document.querySelector(".todo-input");
-const todoButton = document.querySelector(".todo-button");
-const todoList = document.querySelector(".todo-list");
-const filterOption = document.querySelector(".filter-todo");
+// Select DOM all elements 
+const todoInput = document.querySelector('.todo-input');
+const todoButton = document.querySelector('.todo-button');
+const todoList = document.querySelector('.todo-list');
+const filterOption = document.querySelector('.filter-todo');
 
 // Event Listeners
 todoButton.addEventListener('click', addTodo);
-todoList.addEventListener('click', deleteCheck, editTodo);
+todoList.addEventListener('click', deleteCheck);
 filterOption.addEventListener('click', filterTodo);
 
 //Functions
@@ -43,21 +43,18 @@ function addTodo(e) {
     editButton.innerText = "edit";
     editButton.classList.add("edit-btn");
     todoDiv.appendChild(editButton);
+    editButton.onclick = function(){
+        editTask(newTodo);
+    };
 
     // Append todo list
     todoList.appendChild(todoDiv);
 }
 
-// Edit 
-function editTodo(e) {
-    // Prevent natural behaviour
-    e.preventDefault();
-// Edit todo
-    const editInput = document.querySelector(".todo-item");
-    editInput.innerHTML = todoInput.value;
-    editInput.classList.replace("todo-item");
-    todoDiv.appendChild(editInput);
-
+// Edit
+function editTask(e){
+    let editValue = prompt("Edit your task", e.firstChild.nodeValue);
+    e.firstChild.nodeValue = editValue;
 }
 
 // Action Delete, Check and Edit
