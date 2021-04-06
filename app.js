@@ -5,7 +5,7 @@ const filterOption = document.querySelector('.filter-todo');
 
 todoButton.addEventListener('click', addTodo);
 
-const allTodos = [{ name: "", done: false, createdAt: new Date() }];
+const allTodos = [];
 console.log(allTodos);
 
 function renderTodos() {
@@ -20,10 +20,10 @@ function renderTodos() {
 renderTodos();
 
 function createTodoElement(todo, index) {
-    const list = document.createElement("ul");
+    const list = document.createElement("li");
     list.classList.add("todo");
 
-    const newTodo = document.createElement("list");
+    const newTodo = document.createElement("span");
     newTodo.innerText = todo.name;
     newTodo.classList.add("todo-item");
     list.appendChild(newTodo);
@@ -52,12 +52,17 @@ function createTodoElement(todo, index) {
     return list;
 }
 
-function addTodo(todo, index) {
-    todo.preventDefault();
+function addTodo(e) {
+    e.preventDefault();
     const newTask = { name: todoInput.value, done: false, createdAt: new Date() };
     allTodos.push(newTask);
     todoInput.value = "";
 
+    renderTodos();
+}
+
+function checkTask(index) {
+    allTodos[index].done = true;
     renderTodos();
 }
 
