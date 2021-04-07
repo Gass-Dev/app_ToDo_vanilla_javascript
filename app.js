@@ -5,13 +5,16 @@ const filterOption = document.querySelector('.filter-todo');
 
 todoButton.addEventListener('click', addTodo);
 
-const allTodos = [];
-console.log(allTodos);
+const state = {
+    editedTaskIndex: null,
+    editedTaskName: "",
+    allTodos: [],
+};
 
 function renderTodos() {
     todoList.childNodes.forEach((child) => child.remove());
 
-    allTodos.forEach((todo, index) => {
+    state.allTodos.forEach((todo, index) => {
         const element = createTodoElement(todo, index);
         todoList.appendChild(element);
     });
@@ -23,17 +26,19 @@ function createTodoElement(todo, index) {
     const list = document.createElement("li");
     list.classList.add("todo");
 
-    const newTodo = document.createElement("span");
-    newTodo.innerText = todo.name;
-    newTodo.classList.add("todo-item");
-    list.appendChild(newTodo);
-    todoInput.value = "";
+    let taskNameElement;
+    if (index === state.editedTaskIndex) {
+        taskNameElement = createTaskNameInput(todo.name);
+    } else {
+        taskNameElement = createTaskNameElement(todo.name);
+    }
+    list.appendChild(taskNameElement);
 
     const completedButton = document.createElement("button");
     completedButton.innerHTML = "✔️";
     completedButton.classList.add("complete-btn");
     if (todo.done) {
-        newTodo.classList.toggle("completed");
+        taskNameElement.classList.toggle("completed");
     }
     completedButton.onclick = () => checkTask(index);
     list.appendChild(completedButton);
@@ -46,32 +51,62 @@ function createTodoElement(todo, index) {
     const editButton = document.createElement("button");
     editButton.innerText = "🖊  Edit";
     editButton.classList.add("edit-btn");
-    editButton.onclick = () => editTask(index);
+    editButton.onclick = () => toggleEdit(index);
     list.appendChild(editButton);
 
     return list;
 }
 
+function createTaskNameElement(taskName) {
+    const newTodo = document.createElement("span");
+    newTodo.innerText = taskName;
+    newTodo.classList.add("todo-item");
+    return newTodo;
+}
+
+function createTaskNameInput(taskName) {
+    const span = document.createElement("span");
+
+    const input = document.createElement("input");
+    input.value = taskName;
+    input.oninput = (e) => {
+        state.editedTaskName = e.target.value;
+    };
+    span.appendChild(input);
+
+    const saveButton = document.createElement("button");
+    saveButton.innerHTML = "💾 Save";
+    saveButton.onclick = () => editTask();
+    span.appendChild(saveButton);
+
+    return span;
+}
+
 function addTodo(e) {
     e.preventDefault();
     const newTask = { name: todoInput.value, done: false, createdAt: new Date() };
-    allTodos.push(newTask);
+    state.allTodos.push(newTask);
     todoInput.value = "";
-
     renderTodos();
 }
 
 function checkTask(index) {
-    allTodos[index].done = true;
+    state.allTodos[index].done = true;
     renderTodos();
 }
 
+function toggleEdit(index) {
+    state.editedTaskIndex = index;
+    state.editedTaskName = state.allTodos[index].name;
+    renderTodos();
+}
 
-
-// function editTask(e) {
-//     let editValue = prompt("Edit your task", e.firstChild.nodeValue);
-//     e.firstChild.nodeValue = editValue;
-// }
+function editTask() {
+    state.allTodos[state.editedTaskIndex].name = state.editedTaskName;
+    state.editedTaskIndex = null;
+    state.editedTaskName = "";
+    renderTodos();
+}
 
 // function deleteCheck(e) {
 //     const item = e.target;
@@ -86,10 +121,6 @@ function checkTask(index) {
 //         to do.classList.toggle("completed");
 //     }
 
-//     if (item.classList[0] === "edit-btn") {
-//         const todo = item.parentElement;
-//         to do.classList.toggle("all");
-//     }
 // }
 
 // function filterTodo(e) {
